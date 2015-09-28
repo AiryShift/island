@@ -28,20 +28,18 @@ def generate_smooth_noise(baseNoise, octave):
         sample_i0 = i // samplePeriod * samplePeriod
         sample_i1 = (sample_i0 + samplePeriod) % width
         horizontal_blend = (i - sample_i0) * sampleFrequency
+
         for j in range(len(baseNoise[i])):
             sample_j0 = j // samplePeriod * samplePeriod
-            sample_j1 = (sample_j0 + samplePeriod) * sampleFrequency
+            sample_j1 = (sample_j0 + samplePeriod) % height
             vertical_blend = (j - sample_j0) * sampleFrequency
-            # print(sample_j0)
-            try:
-                top = interpolate(baseNoise[sample_i0][sample_j0], baseNoise[
-                                  sample_i1][sample_j0], horizontal_blend)
-                bottom = interpolate(baseNoise[sample_i0][sample_j1], baseNoise[
-                                     sample_i1][sample_j1], horizontal_blend)
 
-                smoothNoise[i][j] = interpolate(top, bottom, vertical_blend)
-            except IndexError:
-                pass
+            top = interpolate(baseNoise[sample_i0][sample_j0], baseNoise[
+                              sample_i1][sample_j0], horizontal_blend)
+            bottom = interpolate(baseNoise[sample_i0][sample_j1], baseNoise[
+                                 sample_i1][sample_j1], horizontal_blend)
+
+            smoothNoise[i][j] = interpolate(top, bottom, vertical_blend)
     return smoothNoise
 
 
@@ -71,7 +69,7 @@ def generate_perlin_noise(baseNoise, octaveCount):
     return perlinNoise
 
 
-def make_rgb(baseNoise, colorType=None):
+def make_rgb(baseNoise):
     width = len(baseNoise)
     height = len(baseNoise[0])
     rgbNoise = np.zeros((width, height * 3))
@@ -80,13 +78,13 @@ def make_rgb(baseNoise, colorType=None):
             rgbNoise[i][j * 3] = round(baseNoise[i][j] * 255)
             rgbNoise[i][j * 3 + 1] = round(baseNoise[i][j] * 255)
             rgbNoise[i][j * 3 + 2] = round(baseNoise[i][j] * 255)
+    rgbNoise = np.array(rgbNoise, dtype='uint8')
     return rgbNoise
 
 
 def generate_noise(width=4, height=4, octaveCount=5, seed=None):
     noise = generate_perlin_noise(
         generate_white_noise(width, height, seed=seed), octaveCount)
-    return noise
     return make_rgb(noise)
 
 
