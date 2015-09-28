@@ -2,6 +2,7 @@ import random
 import numpy as np
 
 PERSISTENCE = 0.5
+MAX_BYTE_VAL = 255
 
 
 def generate_white_noise(width, height, seed=None):
@@ -17,6 +18,10 @@ def interpolate(x0, x1, alpha):
 
 
 def generate_smooth_noise(baseNoise, octave):
+    """Generates smooth noise
+    Sample the noise array at every point (i^2k, j^2k), for all i, j,
+    Interpolate the other points linearly
+    """
     width = len(baseNoise)
     height = len(baseNoise[0])
     smoothNoise = np.zeros((width, height))
@@ -75,9 +80,9 @@ def make_rgb(baseNoise):
     rgbNoise = np.zeros((width, height * 3))
     for i in range(width):
         for j in range(height):
-            rgbNoise[i][j * 3] = round(baseNoise[i][j] * 255)
-            rgbNoise[i][j * 3 + 1] = round(baseNoise[i][j] * 255)
-            rgbNoise[i][j * 3 + 2] = round(baseNoise[i][j] * 255)
+            rgbNoise[i][j * 3] = round(baseNoise[i][j] * MAX_BYTE_VAL)
+            rgbNoise[i][j * 3 + 1] = round(baseNoise[i][j] * MAX_BYTE_VAL)
+            rgbNoise[i][j * 3 + 2] = round(baseNoise[i][j] * MAX_BYTE_VAL)
     rgbNoise = np.array(rgbNoise, dtype='uint8')
     return rgbNoise
 
