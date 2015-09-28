@@ -2,7 +2,6 @@ import random
 import numpy as np
 
 PERSISTENCE = 0.5
-MAX_BYTE_VAL = 255
 
 
 def generate_white_noise(width, height, seed=None):
@@ -74,23 +73,10 @@ def generate_perlin_noise(baseNoise, octaveCount):
     return perlinNoise
 
 
-def make_rgb(baseNoise):
-    width = len(baseNoise)
-    height = len(baseNoise[0])
-    rgbNoise = np.zeros((width, height * 3))
-    for i in range(width):
-        for j in range(height):
-            rgbNoise[i][j * 3] = round(baseNoise[i][j] * MAX_BYTE_VAL)
-            rgbNoise[i][j * 3 + 1] = round(baseNoise[i][j] * MAX_BYTE_VAL)
-            rgbNoise[i][j * 3 + 2] = round(baseNoise[i][j] * MAX_BYTE_VAL)
-    rgbNoise = np.array(rgbNoise, dtype='uint8')
-    return rgbNoise
-
-
 def generate_noise(width=4, height=4, octaveCount=5, seed=None):
     noise = generate_perlin_noise(
         generate_white_noise(width, height, seed=seed), octaveCount)
-    return make_rgb(noise)
+    return noise
 
 
 if __name__ == '__main__':
